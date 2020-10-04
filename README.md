@@ -1,2 +1,4 @@
 # Domain-Scrape
-Website + simple script for scraping 1M + domains. 
+Website + simple script for scraping 1M + domains.
+
+VPN required.
