@@ -1,0 +1,195 @@
+
+<html style="background-color:black">
+
+<head>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	
+	<div class="main-header">
+		<div class="header-wrapper">
+			<h1 class="header">Live Domain Scraper</h1>
+		</div>
+	</div>
+
+	<div id="main" class="main">
+	</div>
+
+	<div class="buy">
+		<a href="{{ url_for('buy')}} " class="buy-csv">Buy a CSV</a>
+	</div>
+
+	<div class="made-by-luke">
+		<a target="blank" href="https://twitter.com/lukepiette">Made by Luke</a>
+	</div>
+
+</body>
+
+
+<style>
+
+.main {
+	width:50%;
+	margin:0 auto;
+	border:4px solid black;
+	height:60vh;
+	display:block;
+	background-color:#f7f7f8;
+	overflow-y:auto;
+	box-shadow: 0 0 10px 1px #111 inset;
+}
+
+.main-header {
+	width:50%;
+	margin:0 auto;
+	height:45px;
+	margin-top:15vh;
+	display:block;
+	background-color:#f7f7f8;
+	overflow-y:auto;
+	overflow-y:hidden;
+	overflow-x:hidden;
+}
+
+.domain {
+	margin-top:2vh;
+	margin-bottom:2vh;
+	margin-left:2vw;
+	color:rgb(0,0,0,0.6);
+}
+
+.taken {
+	padding-left:20px;
+	color:rgb(0,0,0,0.6);
+}
+
+.available {
+	padding-left:20px;
+	color:black;
+}
+
+.header {
+	margin-left:2vw;
+	display:inline-block;
+	padding-bottom:10px;
+}
+
+.header-wrapper {
+	width:100%;
+	height:40px;
+	border:4px solid black;
+	border-left:0px transparent;
+	border-bottom:0px transparent;
+}
+
+.buy {
+	width:50%;
+	margin:0 auto;
+	height:10vh;
+	display:block;
+	background-color:#000000;
+}
+
+.buy-csv {
+	text-decoration:underline;
+	margin-top:20px;
+}
+
+.made-by-luke {
+	position:absolute;
+	float:right;
+	bottom:0;
+	right:0;
+	padding:20px;
+}
+
+
+h1 {
+	margin:0;
+	color:black;
+	font-family: 'Roboto', sans-serif;
+}
+
+p {
+	color:black;
+	font-family: 'Roboto', sans-serif;
+}
+
+a {
+	font-family: 'Roboto', sans-serif;
+	text-decoration: none;
+	display:block;
+	color:#337ab7;
+}
+
+/*ef8354, 451093*/
+
+</style>
+
+
+<script>
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+async function parseData(data){
+	var dataList = data.split("|");
+	var randomIndex = getRandomInt(0,dataList.length)
+	var firstHTML = ''
+
+	for (i=randomIndex;i<randomIndex+20;i++){
+		var splitItem = dataList[i].split(',');
+		var domain = splitItem[0];
+		var price = splitItem[1];
+
+		if (price == 'unavailable'){
+			firstHTML += `<p class="domain">${domain}<span class="taken">taken</span></p>`
+		}
+		else {
+			firstHTML += `<p class="domain"><a target="blank_" href="https://ca.godaddy.com/domainsearch/find?checkAvail=1&isc=cocagca004&domainToCheck=${domain}">${domain}<span class="available">price: $${price} CAD</span></a></p>`
+		}
+	}
+
+	document.getElementById('main').innerHTML = firstHTML
+
+	var trackScroll = 0
+	for (i=randomIndex+20;i<dataList.length-(randomIndex+20);i++){
+		await sleep(getRandomInt(300,1200));
+
+		var preHTML = document.getElementById('main').innerHTML
+		var splitItem = dataList[i].split(',');
+		var domain = splitItem[0];
+		var price = splitItem[1];
+
+		if (price == 'unavailable'){
+			document.getElementById('main').innerHTML = preHTML + `<p class="domain">${domain}<span class="taken">taken</span></p>`
+		}
+		else {
+			document.getElementById('main').innerHTML = preHTML + `<p class="domain"><a target="blank_" href="https://ca.godaddy.com/domainsearch/find?checkAvail=1&isc=cocagca004&domainToCheck=${domain}">${domain}<span class="available">price: $${price} CAD</span></a></p>`
+		}
+
+		document.getElementById('main').scrollTop = document.getElementById('main').scrollHeight;
+	}
+	window.location.reload(false);
+}
+
+
+var data = '{{data}}'
+
+parseData(data);
+
+</script>
+
+
+
+
+</html>
